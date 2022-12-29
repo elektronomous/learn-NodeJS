@@ -10,6 +10,14 @@ const server = http.createServer((req, res) => {
     res.end("This is OVERVIEW");
   } else if (pathName === "/product") {
     res.end("This is PRODUCT");
+  } else {
+    res.writeHead(404, {
+      "Content-type": "text/html", // expect the browser to receive html file
+      "custom-header": "Hello world",
+    });
+    res.end("<h1>Page not found!</h1>");
+
+    // NOTE: you send the status code first then the response
   }
 });
 
