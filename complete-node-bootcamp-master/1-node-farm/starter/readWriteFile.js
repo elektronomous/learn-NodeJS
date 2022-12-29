@@ -24,6 +24,11 @@ fs.readFile("txt/start.txt", "utf-8", (err, data) => {
 // welcome to callback HELL
 // the next readFile will depend on the previous readFile result
 fs.readFile("txt/start.txt", "utf-8", (err, data1) => {
+  // if encounter an error
+  if (err) {
+    console.log("Error, check your file");
+    return;
+  }
   fs.readFile(`txt/${data1}.txt`, "utf-8", (err, data2) => {
     console.log(data2);
     fs.readFile("txt/append.txt", "utf-8", (err, data3) => {
