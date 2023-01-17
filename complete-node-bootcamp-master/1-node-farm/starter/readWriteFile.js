@@ -20,6 +20,7 @@ fs.writeFileSync("txt/output.txt", textOutput);
 fs.readFile("txt/start.txt", "utf-8", (err, data) => {
   console.log(data);
 });
+// without utf-8 the result => <Buffer 72 65 61 64 2d 74 68 69 73>
 
 // welcome to callback HELL
 // the next readFile will depend on the previous readFile result
