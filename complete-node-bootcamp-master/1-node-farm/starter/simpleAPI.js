@@ -2,10 +2,15 @@
 const http = require("http");
 // API is to serve the client the data that they're asking
 const fs = require("fs");
+// to parse the URL, we need url module
+const url = require("url");
+
 const { resolveNaptr } = require("dns");
 
 // we need the replaceProduct
 const replaceProduct = require(`${__dirname}/libs/replaceProduct.js`);
+// when we have something that's not valid
+const redirectTo = require(`${__dirname}/libs/redirectTo.js`);
 
 // we first need to read the html where we show our default interface to the client
 const tempOverview = fs.readFileSync(
@@ -30,7 +35,9 @@ const dataObj = JSON.parse(data);
 // create server so we can handle the client's request
 const server = http.createServer((req, res) => {
   // get the client URI using URL method inside the req
-  const pathName = req.url;
+  // const pathName = req.url;
+  // from req.url, we can parse to get the query string
+  const { query, pathname: pathName } = url.parse(req.url, true);
 
   // using this URI, we could show what client want to request
   if (pathName === "/" || pathName === "/overview") {
@@ -45,12 +52,24 @@ const server = http.createServer((req, res) => {
     overview = tempOverview.replace(/{%PRODUCT_CARDS%}/g, cardsHTML);
     // console.log(...cardsHTML);
     res.end(overview);
-  } else if (pathName === "/api") {
-    res.writeHead(200, {
-      "Content-type": "text/html",
-    });
+  } else if (pathName === "/product") {
+    // the query product could be manually edited so we need to
+    // make sure that id is correct
+    isValidId = query?.id ?? null;
+    // is our data on the id
+    isDataExist = dataObj[query.id] ?? null;
 
-    res.end("API");
+    // if it's not valid, go back to the home page
+    if (!isValidId || !isDataExist) {
+      redirectTo(res);
+    } else {
+      res.writeHead(200, {
+        "Content-type": "text/html",
+      });
+
+      const output = replaceProduct(dataObj[query.id], tempProduct);
+      res.end(output);
+    }
   } else {
     res.writeHead(404, {
       "Content-type": "text/html",

@@ -14,7 +14,7 @@ module.exports = function (data, productHTML) {
   // nutrients
   output = output.replace(/{%NUTRIENTS%}/g, data.nutrients);
   // organic
-  if (data.organic) output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
+  if (!data.organic) output = output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
 
   return output;
 };
