@@ -4,6 +4,9 @@ const http = require("http");
 const fs = require("fs");
 const { resolveNaptr } = require("dns");
 
+// we need the replaceProduct
+const replaceProduct = require(`${__dirname}/libs/replaceProduct.js`);
+
 // we first need to read the html where we show our default interface to the client
 const tempOverview = fs.readFileSync(
   `${__dirname}/templates/template-overview.html`,
@@ -23,27 +26,6 @@ const tempCard = fs.readFileSync(
 // on our backend, we have data that could be client request
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`);
 const dataObj = JSON.parse(data);
-
-const replaceProduct = (data, productHTML) => {
-  // ID
-  const output = productHTML.replace(/{%ID%}/g, data.id);
-  // replace image first
-  output.replace(/{%IMAGE%}/g, data.image);
-  // then product name
-  output.replace(/{%PRODUCTNAME%}/g, data.productName);
-  // country
-  output.replace(/{%FROM%}/g, data.from);
-  // price
-  output.replace(/{%PRICE%}/g, data.price);
-  // quantity
-  output.replace(/{%QUANTITY%}/g, data.quantity);
-  // nutrients
-  output.replace(/{%NUTRIENTS%}/g, data.nutrients);
-  // organic
-  if (!data.organic) output.replace(/{%NOT_ORGANIC%}/g, "not-organic");
-
-  return output;
-};
 
 // create server so we can handle the client's request
 const server = http.createServer((req, res) => {
