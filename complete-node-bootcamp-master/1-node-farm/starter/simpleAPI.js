@@ -7,6 +7,9 @@ const url = require("url");
 
 const { resolveNaptr } = require("dns");
 
+// using slugify to filter the last part of the URL
+const slugify = require('slugify');
+
 // we need the replaceProduct
 const replaceProduct = require(`${__dirname}/libs/replaceProduct.js`);
 // when we have something that's not valid
@@ -31,6 +34,14 @@ const tempCard = fs.readFileSync(
 // on our backend, we have data that could be client request
 const data = fs.readFileSync(`${__dirname}/dev-data/data.json`);
 const dataObj = JSON.parse(data);
+
+// testing using the slugify
+console.log(slugify("Hello There", {
+  lower: true
+}));
+
+const slugs = dataObj.map(el => slugify(el.productName, {lower: true}));
+console.log(slugs);
 
 // create server so we can handle the client's request
 const server = http.createServer((req, res) => {
